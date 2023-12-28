@@ -1,0 +1,33 @@
+#!/usr/bin/env zsh
+
+function load_pnpm() {
+  local BLUE='\033[0;34m'
+  local RESET='\033[0m'
+
+  local current_version=$(nvm current)
+
+  if [ -e "$(dirname $(nvm which $current_version --silent))/pnpm" ]; then
+    return 0
+  fi
+
+  local version
+  local node_version=$(echo $current_version | awk -F'.' '{print substr($1,2)}')
+
+  case $node_version in
+    8|9)
+        version="@latest-4" ;;
+    10|11)
+        version="@latest-5" ;;
+    12|13)
+        version="@latest-6" ;;
+    14|15)
+        version="@latest-7" ;;
+    16|17|18|19|20|21)
+        version="@latest-8" ;;
+    *)
+        version="@latest" ;;
+  esac
+
+  echo "${BLUE}Installing pnpm$version for node $node_version${RESET}"
+  npm install -g pnpm$version &> /dev/null
+}
